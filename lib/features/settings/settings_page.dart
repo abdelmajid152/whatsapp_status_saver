@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/app_info.dart';
 import '../../core/l10n/strings.dart';
 import '../../core/widgets/app_icons.dart';
+import '../../core/widgets/snack.dart';
 import '../media/data/media_repository.dart';
+import 'privacy_policy_page.dart';
 import 'settings_controller.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
-
-  static const appVersion = '2.0.0';
 
   static const _themeLabels = {
     ThemeMode.system: Tr.themeSystem,
@@ -94,15 +97,44 @@ class SettingsPage extends ConsumerWidget {
             title: context.tr(Tr.about),
             children: [
               _Tile(
+                icon: AppIcons.privacy,
+                title: context.tr(Tr.privacyPolicy),
+                subtitle: context.tr(Tr.privacyPolicyHint),
+                onTap: () => PrivacyPolicyPage.open(context),
+              ),
+              _Tile(
+                icon: AppIcons.mail,
+                title: context.tr(Tr.support),
+                subtitle: '\u2066${AppInfo.supportEmail}\u2069',
+                onTap: () => _contactSupport(context),
+              ),
+              _Tile(
                 icon: AppIcons.info,
                 title: context.tr(Tr.appName),
-                subtitle: '${context.tr(Tr.version)} $appVersion',
+                subtitle: '${context.tr(Tr.version)} ${AppInfo.version}',
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  /// Opens the mail app; falls back to copying the address.
+  static Future<void> _contactSupport(BuildContext context) async {
+    final subject = '${context.tr(Tr.appName)} ${AppInfo.version}';
+    final uri = Uri(
+      scheme: 'mailto',
+      path: AppInfo.supportEmail,
+      query: 'subject=${Uri.encodeComponent(subject)}',
+    );
+    var opened = false;
+    try {
+      opened = await launchUrl(uri);
+    } catch (_) {}
+    if (opened || !context.mounted) return;
+    await Clipboard.setData(const ClipboardData(text: AppInfo.supportEmail));
+    if (context.mounted) context.snack(Tr.emailCopied, icon: AppIcons.copy);
   }
 
   static void _choose<T>(

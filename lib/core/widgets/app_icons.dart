@@ -38,6 +38,9 @@ abstract final class AppIcons {
   static const language = HugeIcons.strokeRoundedTranslate;
   static const help = HugeIcons.strokeRoundedHelpCircle;
   static const info = HugeIcons.strokeRoundedInformationCircle;
+  static const privacy = HugeIcons.strokeRoundedSecurityCheck;
+  static const mail = HugeIcons.strokeRoundedMail01;
+  static const copy = HugeIcons.strokeRoundedCopy01;
 
   /// Hugeicons don't auto-mirror, so pick the arrow for the reading direction.
   static AppIconData back(BuildContext context) => _rtl(context)
