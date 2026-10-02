@@ -79,7 +79,8 @@ class SettingsPage extends ConsumerWidget {
               _Tile(
                 icon: AppIcons.folder,
                 title: context.tr(Tr.downloadLocation),
-                subtitle: MediaRepository.savedDir,
+                // LTR isolate so the path doesn't get reordered in Arabic.
+                subtitle: '\u2066${MediaRepository.savedDir}\u2069',
               ),
               _Tile(
                 icon: AppIcons.shield,

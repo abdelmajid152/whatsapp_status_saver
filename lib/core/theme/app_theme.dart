@@ -7,7 +7,8 @@ abstract final class AppColors {
   static const tealDark = Color(0xFF00A884);
 
   static const lightBg = Color(0xFFFFFFFF);
-  static const lightCard = Color(0xFFF0F2F5);
+  static const lightCard = Color(0xFFF0F2F5); // Placeholders / shimmer only.
+  static const lightBorder = Color(0xFFE9EDEF);
   static const lightText = Color(0xFF111B21);
 
   static const darkBg = Color(0xFF0B141A);
@@ -26,7 +27,10 @@ abstract final class AppTheme {
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final bg = isDark ? AppColors.darkBg : AppColors.lightBg;
-    final card = isDark ? AppColors.darkCard : AppColors.lightCard;
+    // Placeholder tone (shimmer, empty thumbnails).
+    final placeholder = isDark ? AppColors.darkCard : AppColors.lightCard;
+    // Cards, sheets and dialogs: pure white in light mode.
+    final card = isDark ? AppColors.darkCard : AppColors.lightBg;
     final text = isDark ? AppColors.darkText : AppColors.lightText;
     final primary = isDark ? AppColors.tealDark : AppColors.teal;
 
@@ -40,7 +44,14 @@ abstract final class AppTheme {
           secondary: AppColors.green,
           surface: bg,
           onSurface: text,
-          surfaceContainerHighest: card,
+          // Remove the seed's green tint from every elevated surface.
+          surfaceTint: Colors.transparent,
+          surfaceContainerLowest: card,
+          surfaceContainerLow: card,
+          surfaceContainer: card,
+          surfaceContainerHigh: card,
+          surfaceContainerHighest: placeholder,
+          outlineVariant: isDark ? AppColors.darkCard : AppColors.lightBorder,
           onSurfaceVariant: AppColors.muted,
         );
 
@@ -50,6 +61,15 @@ abstract final class AppTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: bg,
       splashFactory: InkSparkle.splashFactory,
+      canvasColor: bg,
+      dialogTheme: DialogThemeData(backgroundColor: card),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: card,
+        surfaceTintColor: Colors.transparent,
+      ),
+      dividerTheme: DividerThemeData(
+        color: isDark ? AppColors.darkBg : AppColors.lightBorder,
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: bg,
         foregroundColor: text,
@@ -78,7 +98,12 @@ abstract final class AppTheme {
         color: card,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: isDark
+              ? BorderSide.none
+              : const BorderSide(color: AppColors.lightBorder),
+        ),
         clipBehavior: Clip.antiAlias,
       ),
       listTileTheme: ListTileThemeData(
