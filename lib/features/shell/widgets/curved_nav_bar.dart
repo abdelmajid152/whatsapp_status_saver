@@ -26,7 +26,7 @@ class CurvedNavBar extends ConsumerWidget {
   final List<NavItem> items;
   final VoidCallback onCenterTap;
 
-  static const _barHeight = 70.0;
+  static const _barHeight = 80.0;
   static const _buttonSize = 58.0;
   static const _overlap = 26.0; // How far the button rises above the bar.
   static const _notchWidth = 136.0;
@@ -211,6 +211,7 @@ class _BarPainter extends CustomPainter {
   final double notchDepth;
 
   static const _radius = 28.0;
+  static const _slope = 8.0; // Top edge dips this much toward the notch.
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -218,36 +219,62 @@ class _BarPainter extends CustomPainter {
     final half = notchWidth / 2;
     const r = Radius.circular(_radius);
 
-    final path = Path()
-      ..moveTo(0, _radius)
+    // Top outline: corners sit highest, the edge slopes gently down into
+    // the notch on both sides (like the reference design).
+    void top(Path p) => p
       ..arcToPoint(const Offset(_radius, 0), radius: r)
-      ..lineTo(cx - half, 0)
+      ..lineTo(cx - half, _slope)
       ..cubicTo(
         cx - half * 0.45,
-        0,
+        _slope,
         cx - half * 0.6,
         notchDepth,
         cx,
         notchDepth,
       )
-      ..cubicTo(cx + half * 0.6, notchDepth, cx + half * 0.45, 0, cx + half, 0)
+      ..cubicTo(
+        cx + half * 0.6,
+        notchDepth,
+        cx + half * 0.45,
+        _slope,
+        cx + half,
+        _slope,
+      )
       ..lineTo(w - _radius, 0)
-      ..arcToPoint(Offset(w, _radius), radius: r)
+      ..arcToPoint(Offset(w, _radius), radius: r);
+
+    final body = Path()..moveTo(0, _radius);
+    top(body);
+    body
       ..lineTo(w, h - _radius)
       ..arcToPoint(Offset(w - _radius, h), radius: r)
       ..lineTo(_radius, h)
       ..arcToPoint(Offset(0, h - _radius), radius: r)
       ..close();
 
+    // Border only along the top and down the sides, fading out — no
+    // border along the bottom.
+    final fadeEnd = h * 0.75;
+    final outline = Path()
+      ..moveTo(0, fadeEnd)
+      ..lineTo(0, _radius);
+    top(outline);
+    outline.lineTo(w, fadeEnd);
+
     canvas
-      ..drawShadow(path, Colors.black, 8, false)
-      ..drawPath(path, Paint()..color = fill)
+      ..drawShadow(body, Colors.black, 8, false)
+      ..drawPath(body, Paint()..color = fill)
       ..drawPath(
-        path,
+        outline,
         Paint()
-          ..color = stroke
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5,
+          ..strokeWidth = 1.5
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0, 0.5, 1],
+            colors: [stroke, stroke, stroke.withValues(alpha: 0)],
+          ).createShader(Rect.fromLTWH(0, 0, w, fadeEnd)),
       );
   }
 

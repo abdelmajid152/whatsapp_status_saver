@@ -5,6 +5,7 @@ import '../../../core/widgets/app_icons.dart';
 import '../data/media_item.dart';
 import 'media_thumbnail.dart';
 import 'save_button.dart';
+import 'share_button.dart';
 
 class MediaTile extends StatelessWidget {
   const MediaTile({
@@ -46,6 +47,11 @@ class MediaTile extends StatelessWidget {
                 start: 6,
                 child: _VideoBadge(),
               ),
+            PositionedDirectional(
+              bottom: 6,
+              start: 6,
+              child: ShareButton(item),
+            ),
             if (showSave)
               PositionedDirectional(bottom: 6, end: 6, child: SaveButton(item)),
           ],

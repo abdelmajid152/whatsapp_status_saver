@@ -18,6 +18,8 @@ abstract final class AppColors {
 }
 
 abstract final class AppTheme {
+  static const fontFamily = 'IBMPlexSansArabic';
+
   static final light = _build(Brightness.light);
   static final dark = _build(Brightness.dark);
 
@@ -44,6 +46,7 @@ abstract final class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: fontFamily,
       colorScheme: scheme,
       scaffoldBackgroundColor: bg,
       splashFactory: InkSparkle.splashFactory,
@@ -53,6 +56,7 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
           color: text,
           fontSize: 24,
           fontWeight: FontWeight.w700,
@@ -64,7 +68,11 @@ abstract final class AppTheme {
         indicatorColor: primary,
         indicatorSize: TabBarIndicatorSize.label,
         dividerColor: Colors.transparent,
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+        labelStyle: const TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+        ),
       ),
       cardTheme: CardThemeData(
         color: card,
@@ -76,6 +84,7 @@ abstract final class AppTheme {
       listTileTheme: ListTileThemeData(
         iconColor: primary,
         subtitleTextStyle: const TextStyle(
+          fontFamily: fontFamily,
           color: AppColors.muted,
           fontSize: 13,
         ),
@@ -94,13 +103,20 @@ abstract final class AppTheme {
           backgroundColor: primary,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          textStyle: const TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: isDark ? AppColors.darkCard : AppColors.lightText,
-        contentTextStyle: const TextStyle(color: Colors.white),
+        contentTextStyle: const TextStyle(
+          fontFamily: fontFamily,
+          color: Colors.white,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );

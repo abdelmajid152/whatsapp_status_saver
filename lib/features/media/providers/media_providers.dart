@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../permissions/permission_controller.dart';
 import '../data/media_item.dart';
@@ -38,6 +39,10 @@ class MediaActions {
 
   Future<bool> delete(MediaItem item) =>
       _run(() => MediaRepository.delete(item));
+
+  /// Opens the system share sheet (WhatsApp, Telegram, …) with the file.
+  Future<void> share(MediaItem item) =>
+      SharePlus.instance.share(ShareParams(files: [XFile(item.path)]));
 
   Future<bool> _run(Future<void> Function() action) async {
     try {

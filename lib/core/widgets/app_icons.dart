@@ -21,6 +21,7 @@ abstract final class AppIcons {
   static const success = HugeIcons.strokeRoundedCheckmarkCircle02;
   static const error = HugeIcons.strokeRoundedAlert02;
   static const delete = HugeIcons.strokeRoundedDelete02;
+  static const share = HugeIcons.strokeRoundedShare08;
 
   static const play = HugeIcons.strokeRoundedPlay;
   static const pause = HugeIcons.strokeRoundedPause;

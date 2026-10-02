@@ -10,6 +10,7 @@ import '../../core/widgets/snack.dart';
 import '../media/data/media_item.dart';
 import '../media/providers/media_providers.dart';
 import '../media/widgets/save_button.dart';
+import '../media/widgets/share_button.dart';
 import 'widgets/video_view.dart';
 
 /// Full-screen swipeable viewer for images and videos.
@@ -85,6 +86,7 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
           valueListenable: _index,
           builder: (_, i, _) => Text(
             '${i + 1} / ${widget.items.length}',
+            textDirection: TextDirection.ltr,
             style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),
@@ -107,9 +109,17 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
         minimum: const EdgeInsets.all(16),
         child: ValueListenableBuilder(
           valueListenable: _index,
-          builder: (_, i, _) => widget.source == MediaSource.saved
-              ? _DeleteButton(widget.items[i])
-              : SaveButton(widget.items[i], expanded: true),
+          builder: (_, i, _) => Row(
+            children: [
+              Expanded(
+                child: widget.source == MediaSource.saved
+                    ? _DeleteButton(widget.items[i])
+                    : SaveButton(widget.items[i], expanded: true),
+              ),
+              const SizedBox(width: 12),
+              ShareButton(widget.items[i], large: true),
+            ],
+          ),
         ),
       ),
     );
