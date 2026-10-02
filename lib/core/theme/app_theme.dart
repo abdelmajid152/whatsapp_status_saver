@@ -28,18 +28,19 @@ abstract final class AppTheme {
     final text = isDark ? AppColors.darkText : AppColors.lightText;
     final primary = isDark ? AppColors.tealDark : AppColors.teal;
 
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.teal,
-      brightness: brightness,
-    ).copyWith(
-      primary: primary,
-      onPrimary: Colors.white,
-      secondary: AppColors.green,
-      surface: bg,
-      onSurface: text,
-      surfaceContainerHighest: card,
-      onSurfaceVariant: AppColors.muted,
-    );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.teal,
+          brightness: brightness,
+        ).copyWith(
+          primary: primary,
+          onPrimary: Colors.white,
+          secondary: AppColors.green,
+          surface: bg,
+          onSurface: text,
+          surfaceContainerHighest: card,
+          onSurfaceVariant: AppColors.muted,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -74,7 +75,10 @@ abstract final class AppTheme {
       ),
       listTileTheme: ListTileThemeData(
         iconColor: primary,
-        subtitleTextStyle: const TextStyle(color: AppColors.muted, fontSize: 13),
+        subtitleTextStyle: const TextStyle(
+          color: AppColors.muted,
+          fontSize: 13,
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
       switchTheme: SwitchThemeData(

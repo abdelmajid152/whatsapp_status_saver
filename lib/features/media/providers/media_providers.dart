@@ -6,19 +6,22 @@ import '../data/media_repository.dart';
 import '../data/video_thumbnails.dart';
 
 /// Files of one source. Invalidating [permissionProvider] rescans every source.
-final mediaProvider = FutureProvider.family<MediaFiles, MediaSource>(
-  (ref, source) async {
-    final granted = await ref.watch(permissionProvider.future);
-    return granted ? MediaRepository.scan(source) : MediaFiles.empty;
-  },
-);
+final mediaProvider = FutureProvider.family<MediaFiles, MediaSource>((
+  ref,
+  source,
+) async {
+  final granted = await ref.watch(permissionProvider.future);
+  return granted ? MediaRepository.scan(source) : MediaFiles.empty;
+});
 
 /// Names already in the saved folder — tiles `select` their own entry, so
 /// saving one status rebuilds only that tile.
 final savedNamesProvider = Provider<Set<String>>((ref) {
   final saved = ref.watch(mediaProvider(MediaSource.saved)).value;
   if (saved == null) return const {};
-  return {for (final item in [...saved.images, ...saved.videos]) item.name};
+  return {
+    for (final item in [...saved.images, ...saved.videos]) item.name,
+  };
 });
 
 final videoThumbProvider = FutureProvider.autoDispose

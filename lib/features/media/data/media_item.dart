@@ -52,5 +52,6 @@ class MediaFiles {
       listEquals(other.videos, videos);
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(images), Object.hashAll(videos));
+  int get hashCode =>
+      Object.hash(Object.hashAll(images), Object.hashAll(videos));
 }

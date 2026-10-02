@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/strings.dart';
+import '../../../core/widgets/app_icons.dart';
 import '../../../core/widgets/empty_view.dart';
+import '../../../core/widgets/shimmer_box.dart';
 import '../../viewer/media_viewer_page.dart';
 import '../data/media_item.dart';
 import '../providers/media_providers.dart';
 import 'media_tile.dart';
+
+const _gridPadding = EdgeInsets.fromLTRB(12, 8, 12, 140);
+const _gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+  crossAxisCount: 3,
+  mainAxisSpacing: 8,
+  crossAxisSpacing: 8,
+  childAspectRatio: 0.72,
+);
 
 class MediaGrid extends ConsumerWidget {
   const MediaGrid({super.key, required this.source, required this.type});
@@ -24,9 +34,7 @@ class MediaGrid extends ConsumerWidget {
       ),
     );
 
-    if (items == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    if (items == null) return const _LoadingGrid();
 
     final isSaved = source == MediaSource.saved;
     return RefreshIndicator(
@@ -34,20 +42,15 @@ class MediaGrid extends ConsumerWidget {
       child: items.isEmpty
           ? EmptyView(
               icon: isSaved
-                  ? Icons.download_for_offline_outlined
-                  : Icons.photo_library_outlined,
+                  ? AppIcons.saved
+                  : (type == MediaType.image ? AppIcons.image : AppIcons.video),
               title: context.tr(isSaved ? Tr.noSaved : Tr.noStatus),
               message: context.tr(isSaved ? Tr.noSavedHint : Tr.noStatusHint),
             )
           : GridView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 140),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                childAspectRatio: 0.72,
-              ),
+              padding: _gridPadding,
+              gridDelegate: _gridDelegate,
               itemCount: items.length,
               itemBuilder: (context, i) => MediaTile(
                 key: ValueKey(items[i].path),
@@ -56,6 +59,24 @@ class MediaGrid extends ConsumerWidget {
                 onTap: () => MediaViewerPage.open(context, items, i, source),
               ),
             ),
+    );
+  }
+}
+
+/// Same layout as the real grid, one shared shimmer animation.
+class _LoadingGrid extends StatelessWidget {
+  const _LoadingGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: _gridPadding,
+        gridDelegate: _gridDelegate,
+        itemCount: 15,
+        itemBuilder: (_, _) => const ShimmerBox.plain(radius: 16),
+      ),
     );
   }
 }

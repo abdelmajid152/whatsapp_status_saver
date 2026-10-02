@@ -10,13 +10,14 @@ class AppSettings {
   final Locale locale;
 
   AppSettings copyWith({ThemeMode? themeMode, Locale? locale}) => AppSettings(
-        themeMode: themeMode ?? this.themeMode,
-        locale: locale ?? this.locale,
-      );
+    themeMode: themeMode ?? this.themeMode,
+    locale: locale ?? this.locale,
+  );
 }
 
-final settingsProvider =
-    NotifierProvider<SettingsController, AppSettings>(SettingsController.new);
+final settingsProvider = NotifierProvider<SettingsController, AppSettings>(
+  SettingsController.new,
+);
 
 class SettingsController extends Notifier<AppSettings> {
   static const _themeKey = 'theme_mode';

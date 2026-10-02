@@ -12,8 +12,9 @@ final Future<Permission> _required = () async {
   return sdk >= 30 ? Permission.manageExternalStorage : Permission.storage;
 }();
 
-final permissionProvider =
-    AsyncNotifierProvider<PermissionController, bool>(PermissionController.new);
+final permissionProvider = AsyncNotifierProvider<PermissionController, bool>(
+  PermissionController.new,
+);
 
 class PermissionController extends AsyncNotifier<bool> {
   @override

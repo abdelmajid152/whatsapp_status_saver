@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
+
+import 'app_icons.dart';
 
 /// Centered illustration + text + optional action, shared by every
 /// empty / permission / error state in the app.
@@ -11,7 +14,7 @@ class EmptyView extends StatelessWidget {
     this.action,
   });
 
-  final IconData icon;
+  final AppIconData icon;
   final String title;
   final String? message;
   final Widget? action;
@@ -39,22 +42,26 @@ class EmptyView extends StatelessWidget {
                     color: primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 56, color: primary),
+                  child: Center(
+                    child: HugeIcon(icon: icon, size: 52, color: primary),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.w700),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 if (message != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     message!,
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
                 if (action != null) ...[const SizedBox(height: 28), action!],

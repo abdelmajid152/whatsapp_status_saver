@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../core/l10n/strings.dart';
+import '../../core/widgets/app_icons.dart';
 import '../../core/widgets/snack.dart';
 import '../media/data/media_item.dart';
 import '../media/providers/media_providers.dart';
@@ -33,11 +35,8 @@ class MediaViewerPage extends StatefulWidget {
       PageRouteBuilder(
         opaque: false,
         transitionDuration: const Duration(milliseconds: 220),
-        pageBuilder: (_, _, _) => MediaViewerPage(
-          items: items,
-          initialIndex: index,
-          source: source,
-        ),
+        pageBuilder: (_, _, _) =>
+            MediaViewerPage(items: items, initialIndex: index, source: source),
         transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
@@ -67,8 +66,21 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.black38,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
+        flexibleSpace: const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xAA000000), Colors.transparent],
+            ),
+          ),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: HugeIcon(icon: AppIcons.back(context), color: Colors.white),
+        ),
         title: ValueListenableBuilder(
           valueListenable: _index,
           builder: (_, i, _) => Text(
@@ -84,7 +96,7 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
         itemBuilder: (_, i) {
           final item = widget.items[i];
           return item.isVideo
-              ? VideoView(key: ValueKey(item.path), path: item.path)
+              ? VideoView(key: ValueKey(item.path), item: item)
               : InteractiveViewer(
                   maxScale: 4,
                   child: Center(child: Image.file(File(item.path))),
@@ -139,7 +151,11 @@ class _DeleteButton extends ConsumerWidget {
     return FilledButton.icon(
       style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
       onPressed: () => _delete(context, ref),
-      icon: const Icon(Icons.delete_outline_rounded),
+      icon: const HugeIcon(
+        icon: AppIcons.delete,
+        color: Colors.white,
+        size: 20,
+      ),
       label: Text(context.tr(Tr.delete)),
     );
   }

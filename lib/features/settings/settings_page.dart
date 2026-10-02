@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/l10n/strings.dart';
+import '../../core/widgets/app_icons.dart';
 import '../media/data/media_repository.dart';
 import 'settings_controller.dart';
 
@@ -32,7 +34,7 @@ class SettingsPage extends ConsumerWidget {
             title: context.tr(Tr.appearance),
             children: [
               _Tile(
-                icon: Icons.palette_outlined,
+                icon: AppIcons.theme,
                 title: context.tr(Tr.theme),
                 value: context.tr(_themeLabels[settings.themeMode]!),
                 onTap: () => _choose(
@@ -40,13 +42,14 @@ class SettingsPage extends ConsumerWidget {
                   title: context.tr(Tr.theme),
                   current: settings.themeMode,
                   options: {
-                    for (final e in _themeLabels.entries) e.key: context.tr(e.value),
+                    for (final e in _themeLabels.entries)
+                      e.key: context.tr(e.value),
                   },
                   onSelected: controller.setThemeMode,
                 ),
               ),
               _Tile(
-                icon: Icons.translate_rounded,
+                icon: AppIcons.language,
                 title: context.tr(Tr.language),
                 value: _languages[settings.locale.languageCode],
                 onTap: () => _choose(
@@ -63,7 +66,7 @@ class SettingsPage extends ConsumerWidget {
             title: context.tr(Tr.general),
             children: [
               _Tile(
-                icon: Icons.help_outline_rounded,
+                icon: AppIcons.help,
                 title: context.tr(Tr.howToUse),
                 onTap: () => showDialog<void>(
                   context: context,
@@ -74,12 +77,12 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               _Tile(
-                icon: Icons.folder_outlined,
+                icon: AppIcons.folder,
                 title: context.tr(Tr.downloadLocation),
                 subtitle: MediaRepository.savedDir,
               ),
               _Tile(
-                icon: Icons.admin_panel_settings_outlined,
+                icon: AppIcons.shield,
                 title: context.tr(Tr.appPermissions),
                 subtitle: context.tr(Tr.appPermissionsHint),
                 onTap: openAppSettings,
@@ -90,7 +93,7 @@ class SettingsPage extends ConsumerWidget {
             title: context.tr(Tr.about),
             children: [
               _Tile(
-                icon: Icons.info_outline_rounded,
+                icon: AppIcons.info,
                 title: context.tr(Tr.appName),
                 subtitle: '${context.tr(Tr.version)} $appVersion',
               ),
@@ -121,8 +124,10 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 title: Text(value),
                 trailing: key == current
-                    ? Icon(Icons.check_circle_rounded,
-                        color: Theme.of(sheet).colorScheme.primary)
+                    ? HugeIcon(
+                        icon: AppIcons.success,
+                        color: Theme.of(sheet).colorScheme.primary,
+                      )
                     : null,
                 onTap: () {
                   Navigator.pop(sheet);
@@ -185,7 +190,7 @@ class _Tile extends StatelessWidget {
     this.onTap,
   });
 
-  final IconData icon;
+  final AppIconData icon;
   final String title;
   final String? subtitle;
   final String? value;
@@ -198,7 +203,7 @@ class _Tile extends StatelessWidget {
       onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: primary.withValues(alpha: 0.12),
-        child: Icon(icon, color: primary, size: 22),
+        child: HugeIcon(icon: icon, color: primary, size: 22),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: subtitle == null ? null : Text(subtitle!),
@@ -208,7 +213,11 @@ class _Tile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(value!, style: TextStyle(color: primary)),
-                Icon(Icons.chevron_right_rounded, color: primary),
+                HugeIcon(
+                  icon: AppIcons.forward(context),
+                  color: primary,
+                  size: 18,
+                ),
               ],
             ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/l10n/strings.dart';
+import '../../core/widgets/app_icons.dart';
 import '../media/data/media_item.dart';
 import '../media/widgets/media_page.dart';
 import '../permissions/permission_controller.dart';
@@ -43,10 +44,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       bottomNavigationBar: CurvedNavBar(
         onCenterTap: _refresh,
         items: const [
-          NavItem(Icons.donut_large_rounded, Icons.motion_photos_on_rounded, Tr.status),
-          NavItem(Icons.storefront_outlined, Icons.storefront_rounded, Tr.business),
-          NavItem(Icons.download_for_offline_outlined, Icons.download_for_offline_rounded, Tr.saved),
-          NavItem(Icons.settings_outlined, Icons.settings_rounded, Tr.settings),
+          NavItem(AppIcons.status, Tr.status),
+          NavItem(AppIcons.business, Tr.business),
+          NavItem(AppIcons.saved, Tr.saved),
+          NavItem(AppIcons.settings, Tr.settings),
         ],
       ),
     );

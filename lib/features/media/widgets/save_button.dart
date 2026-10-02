@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_icons.dart';
 import '../../../core/widgets/snack.dart';
 import '../data/media_item.dart';
 import '../providers/media_providers.dart';
@@ -20,7 +22,7 @@ class SaveButton extends ConsumerWidget {
     if (context.mounted) {
       context.snack(
         ok ? Tr.savedOk : Tr.saveFailed,
-        icon: ok ? Icons.check_circle_rounded : Icons.error_rounded,
+        icon: ok ? AppIcons.success : AppIcons.error,
       );
     }
   }
@@ -31,8 +33,8 @@ class SaveButton extends ConsumerWidget {
       savedNamesProvider.select((names) => names.contains(item.name)),
     );
     final onPressed = saved ? null : () => _save(context, ref);
-    final icon = Icon(
-      saved ? Icons.check_rounded : Icons.download_rounded,
+    final icon = HugeIcon(
+      icon: saved ? AppIcons.done : AppIcons.download,
       color: Colors.white,
       size: expanded ? 22 : 18,
     );

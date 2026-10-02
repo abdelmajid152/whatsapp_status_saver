@@ -57,7 +57,8 @@ const _ar = {
   Tr.noSavedHint: 'الحالات التي تحفظها ستظهر هنا',
   Tr.refresh: 'تحديث',
   Tr.permissionTitle: 'نحتاج إذن الوصول للملفات',
-  Tr.permissionBody: 'لعرض حالات واتساب يحتاج التطبيق إلى إذن الوصول لمساحة التخزين',
+  Tr.permissionBody:
+      'لعرض حالات واتساب يحتاج التطبيق إلى إذن الوصول لمساحة التخزين',
   Tr.grantPermission: 'منح الإذن',
   Tr.openSettings: 'فتح الإعدادات',
   Tr.savedOk: 'تم الحفظ بنجاح',
@@ -100,7 +101,8 @@ const _en = {
   Tr.noSavedHint: 'Statuses you save will appear here',
   Tr.refresh: 'Refresh',
   Tr.permissionTitle: 'Storage access needed',
-  Tr.permissionBody: 'Status Saver needs storage access to read WhatsApp statuses',
+  Tr.permissionBody:
+      'Status Saver needs storage access to read WhatsApp statuses',
   Tr.grantPermission: 'Grant access',
   Tr.openSettings: 'Open settings',
   Tr.savedOk: 'Saved successfully',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
+import '../../../core/widgets/app_icons.dart';
 import '../data/media_item.dart';
 import 'media_thumbnail.dart';
 import 'save_button.dart';
@@ -39,21 +41,33 @@ class MediaTile extends StatelessWidget {
             MediaThumbnail(item),
             _shade,
             if (item.isVideo)
-              const Center(
-                child: CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Color(0x66000000),
-                  child: Icon(Icons.play_arrow_rounded, color: Colors.white),
-                ),
+              const PositionedDirectional(
+                top: 6,
+                start: 6,
+                child: _VideoBadge(),
               ),
             if (showSave)
-              PositionedDirectional(
-                bottom: 6,
-                end: 6,
-                child: SaveButton(item),
-              ),
+              PositionedDirectional(bottom: 6, end: 6, child: SaveButton(item)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _VideoBadge extends StatelessWidget {
+  const _VideoBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        color: Color(0x80000000),
+        shape: BoxShape.circle,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(5),
+        child: HugeIcon(icon: AppIcons.play, color: Colors.white, size: 14),
       ),
     );
   }

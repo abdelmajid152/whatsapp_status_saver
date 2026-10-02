@@ -61,7 +61,8 @@ abstract final class MediaRepository {
       }
     }
 
-    int newestFirst(MediaItem a, MediaItem b) => b.modified.compareTo(a.modified);
+    int newestFirst(MediaItem a, MediaItem b) =>
+        b.modified.compareTo(a.modified);
     return MediaFiles(images..sort(newestFirst), videos..sort(newestFirst));
   }
 }

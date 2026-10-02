@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_icons.dart';
 import '../nav_index.dart';
 
 class NavItem {
-  const NavItem(this.icon, this.activeIcon, this.label);
+  const NavItem(this.icon, this.label);
 
-  final IconData icon;
-  final IconData activeIcon;
+  final AppIconData icon;
   final Tr label;
 }
 
 /// Floating bottom bar with a curved notch holding a glowing center button.
 /// Expects exactly four items: two on each side of the notch.
 class CurvedNavBar extends ConsumerWidget {
-  const CurvedNavBar({super.key, required this.items, required this.onCenterTap});
+  const CurvedNavBar({
+    super.key,
+    required this.items,
+    required this.onCenterTap,
+  });
 
   final List<NavItem> items;
   final VoidCallback onCenterTap;
@@ -32,12 +37,12 @@ class CurvedNavBar extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     Widget item(int i) => Expanded(
-          child: _NavButton(
-            item: items[i],
-            selected: current == i,
-            onTap: () => ref.read(navIndexProvider.notifier).select(i),
-          ),
-        );
+      child: _NavButton(
+        item: items[i],
+        selected: current == i,
+        onTap: () => ref.read(navIndexProvider.notifier).select(i),
+      ),
+    );
 
     return SafeArea(
       minimum: const EdgeInsets.fromLTRB(12, 0, 12, 10),
@@ -108,10 +113,11 @@ class _NavButton extends StatelessWidget {
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
-              selected ? item.activeIcon : item.icon,
+            child: HugeIcon(
+              icon: item.icon,
               color: color,
               size: 24,
+              strokeWidth: selected ? 2 : 1.5,
             ),
           ),
           const SizedBox(height: 4),
@@ -173,11 +179,17 @@ class _CenterButtonState extends State<_CenterButton> {
               ),
             ],
           ),
+          alignment: Alignment.center,
           child: AnimatedRotation(
             turns: _turns,
             duration: const Duration(milliseconds: 700),
             curve: Curves.easeInOutCubic,
-            child: const Icon(Icons.refresh_rounded, color: Colors.white, size: 30),
+            child: const HugeIcon(
+              icon: AppIcons.refresh,
+              color: Colors.white,
+              size: 28,
+              strokeWidth: 2,
+            ),
           ),
         ),
       ),
@@ -210,7 +222,14 @@ class _BarPainter extends CustomPainter {
       ..moveTo(0, _radius)
       ..arcToPoint(const Offset(_radius, 0), radius: r)
       ..lineTo(cx - half, 0)
-      ..cubicTo(cx - half * 0.45, 0, cx - half * 0.6, notchDepth, cx, notchDepth)
+      ..cubicTo(
+        cx - half * 0.45,
+        0,
+        cx - half * 0.6,
+        notchDepth,
+        cx,
+        notchDepth,
+      )
       ..cubicTo(cx + half * 0.6, notchDepth, cx + half * 0.45, 0, cx + half, 0)
       ..lineTo(w - _radius, 0)
       ..arcToPoint(Offset(w, _radius), radius: r)

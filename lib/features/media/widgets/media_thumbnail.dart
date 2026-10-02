@@ -2,48 +2,60 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
+import '../../../core/widgets/app_icons.dart';
+import '../../../core/widgets/shimmer_box.dart';
 import '../data/media_item.dart';
 import '../providers/media_providers.dart';
 
 /// Downscaled preview: images are decoded at grid size (not full
-/// resolution), videos use a cached native thumbnail.
+/// resolution), videos use a cached native thumbnail. Shimmers until ready.
 class MediaThumbnail extends ConsumerWidget {
-  const MediaThumbnail(this.item, {super.key});
+  const MediaThumbnail(this.item, {super.key, this.fit = BoxFit.cover});
 
   static const _decodeWidth = 320;
 
   final MediaItem item;
+  final BoxFit fit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final path = item.isVideo
-        ? ref.watch(videoThumbProvider(item)).value
-        : item.path;
+    final thumb = item.isVideo ? ref.watch(videoThumbProvider(item)) : null;
+    if (thumb != null && thumb.isLoading) return const ShimmerBox();
 
-    final placeholder = ColoredBox(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Icon(
-        item.isVideo ? Icons.movie_outlined : Icons.image_outlined,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
-    );
-    if (path == null) return placeholder;
+    final path = item.isVideo ? thumb!.value : item.path;
+    if (path == null) return _Broken(item);
 
     return Image.file(
       File(path),
-      fit: BoxFit.cover,
+      fit: fit,
       cacheWidth: _decodeWidth,
       gaplessPlayback: true,
       filterQuality: FilterQuality.medium,
-      errorBuilder: (_, _, _) => placeholder,
-      frameBuilder: (_, child, frame, sync) => sync
-          ? child
-          : AnimatedOpacity(
-              opacity: frame == null ? 0 : 1,
-              duration: const Duration(milliseconds: 200),
-              child: child,
-            ),
+      errorBuilder: (_, _, _) => _Broken(item),
+      frameBuilder: (_, child, frame, sync) =>
+          sync || frame != null ? child : const ShimmerBox(),
+    );
+  }
+}
+
+class _Broken extends StatelessWidget {
+  const _Broken(this.item);
+
+  final MediaItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return ColoredBox(
+      color: scheme.surfaceContainerHighest,
+      child: Center(
+        child: HugeIcon(
+          icon: item.isVideo ? AppIcons.brokenVideo : AppIcons.brokenImage,
+          color: scheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../core/l10n/strings.dart';
+import '../../core/widgets/app_icons.dart';
 import '../../core/widgets/empty_view.dart';
 import 'permission_controller.dart';
 
@@ -11,12 +13,16 @@ class PermissionView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return EmptyView(
-      icon: Icons.folder_open_rounded,
+      icon: AppIcons.folderOpen,
       title: context.tr(Tr.permissionTitle),
       message: context.tr(Tr.permissionBody),
       action: FilledButton.icon(
         onPressed: ref.read(permissionProvider.notifier).request,
-        icon: const Icon(Icons.lock_open_rounded),
+        icon: const HugeIcon(
+          icon: AppIcons.lock,
+          color: Colors.white,
+          size: 20,
+        ),
         label: Text(context.tr(Tr.grantPermission)),
       ),
     );
