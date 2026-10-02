@@ -12,7 +12,10 @@ class _DeniedPermission extends PermissionController {
 
 void main() {
   testWidgets('shows permission request and switches tabs', (tester) async {
-    SharedPreferences.setMockInitialValues({'locale': 'en'});
+    SharedPreferences.setMockInitialValues({
+      'locale': 'en',
+      'onboarding_done': true,
+    });
     final prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(

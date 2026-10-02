@@ -40,6 +40,14 @@ enum Tr {
   appPermissionsHint,
   about,
   version,
+  onboardTitle1,
+  onboardBody1,
+  onboardTitle2,
+  onboardBody2,
+  onboardTitle3,
+  onboardBody3,
+  next,
+  skip,
 }
 
 const supportedLocales = [Locale('ar'), Locale('en')];
@@ -87,6 +95,15 @@ const _ar = {
   Tr.appPermissionsHint: 'إدارة إذن الوصول للملفات',
   Tr.about: 'حول التطبيق',
   Tr.version: 'الإصدار',
+  Tr.onboardTitle1: 'احفظ حالات واتساب',
+  Tr.onboardBody1:
+      'صور وفيديوهات الحالات التي شاهدتها، تحفظها على جهازك بضغطة واحدة.',
+  Tr.onboardTitle2: 'شاهد ثم احفظ',
+  Tr.onboardBody2: 'افتح الحالة في واتساب أو واتساب الأعمال، ثم ارجع هنا لتجدها جاهزة للحفظ أو المشاركة.',
+  Tr.onboardTitle3: 'إذن الوصول للملفات',
+  Tr.onboardBody3: 'نحتاج هذا الإذن لقراءة الحالات من جهازك فقط، ولا نرفع أي شيء إلى الإنترنت.',
+  Tr.next: 'التالي',
+  Tr.skip: 'تخطي',
 };
 
 const _en = {
@@ -132,6 +149,16 @@ const _en = {
   Tr.appPermissionsHint: 'Manage storage access',
   Tr.about: 'About',
   Tr.version: 'Version',
+  Tr.onboardTitle1: 'Save WhatsApp statuses',
+  Tr.onboardBody1:
+      'Keep the photos and videos you viewed on your phone with a single tap.',
+  Tr.onboardTitle2: 'View, then save',
+  Tr.onboardBody2: 'Open a status in WhatsApp or WhatsApp Business, then come back here to save or share it.',
+  Tr.onboardTitle3: 'Storage access',
+  Tr.onboardBody3:
+      'We only use it to read statuses on your device. Nothing is uploaded.',
+  Tr.next: 'Next',
+  Tr.skip: 'Skip',
 };
 
 extension TrX on BuildContext {
