@@ -39,6 +39,10 @@ const _ar = <_Section>[
     body: 'الحالات ملك لأصحابها. يُرجى عدم إعادة نشرها أو مشاركتها دون إذنهم.',
   ),
   (
+    title: 'الأطفال',
+    body: 'التطبيق غير موجّه للأطفال دون 13 عاماً، ولا نجمع أي بيانات منهم.',
+  ),
+  (
     title: 'التغييرات على هذه السياسة',
     body: 'قد نحدّث هذه السياسة عند إضافة ميزات جديدة، وسيظهر تاريخ آخر تحديث أعلى الصفحة.',
   ),
@@ -69,6 +73,10 @@ const _en = <_Section>[
   (
     title: 'Other people’s privacy',
     body: 'Statuses belong to the people who posted them. Please don’t repost or share them without permission.',
+  ),
+  (
+    title: 'Children',
+    body: 'The app is not directed at children under 13, and we collect no data from them.',
   ),
   (
     title: 'Changes to this policy',
