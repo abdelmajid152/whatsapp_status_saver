@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.example.whatsapp_status_saver"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler_android needs API 37 (backward compatible; targetSdk unchanged).
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
