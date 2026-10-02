@@ -1,176 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'app_colors.dart';
 
-/// App Theme Configuration
-class AppTheme {
-  AppTheme._();
+/// WhatsApp-inspired palette.
+abstract final class AppColors {
+  static const green = Color(0xFF25D366);
+  static const teal = Color(0xFF008069);
+  static const tealDark = Color(0xFF00A884);
 
-  static ThemeData get lightTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.background,
-      colorScheme: const ColorScheme.light(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        surface: AppColors.card,
-        error: AppColors.destructive,
-        onPrimary: AppColors.textLight,
-        onSecondary: AppColors.secondaryForeground,
-        onSurface: AppColors.textPrimary,
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.secondary,
-        foregroundColor: AppColors.secondaryForeground,
-        elevation: 2,
-        centerTitle: true,
-        titleTextStyle: GoogleFonts.workSans(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: AppColors.secondaryForeground,
-        ),
-      ),
-      tabBarTheme: TabBarThemeData(
-        labelColor: AppColors.primaryLight,
-        unselectedLabelColor: AppColors.secondaryForeground.withValues(
-          alpha: 0.7,
-        ),
-        indicatorColor: AppColors.primaryLight,
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: GoogleFonts.workSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        unselectedLabelStyle: GoogleFonts.workSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textLight,
-        elevation: 6,
-      ),
-      cardTheme: CardThemeData(
-        color: AppColors.card,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      textTheme: GoogleFonts.workSansTextTheme().apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
-      ),
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.secondary,
-        contentTextStyle: GoogleFonts.workSans(
-          color: AppColors.textLight,
-          fontSize: 14,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textLight,
-          elevation: 2,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          textStyle: GoogleFonts.workSans(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(
-          foregroundColor: AppColors.secondaryForeground,
-        ),
-      ),
+  static const lightBg = Color(0xFFFFFFFF);
+  static const lightCard = Color(0xFFF0F2F5);
+  static const lightText = Color(0xFF111B21);
+
+  static const darkBg = Color(0xFF0B141A);
+  static const darkCard = Color(0xFF1F2C34);
+  static const darkText = Color(0xFFE9EDEF);
+
+  static const muted = Color(0xFF8696A0);
+}
+
+abstract final class AppTheme {
+  static final light = _build(Brightness.light);
+  static final dark = _build(Brightness.dark);
+
+  static ThemeData _build(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final bg = isDark ? AppColors.darkBg : AppColors.lightBg;
+    final card = isDark ? AppColors.darkCard : AppColors.lightCard;
+    final text = isDark ? AppColors.darkText : AppColors.lightText;
+    final primary = isDark ? AppColors.tealDark : AppColors.teal;
+
+    final scheme = ColorScheme.fromSeed(
+      seedColor: AppColors.teal,
+      brightness: brightness,
+    ).copyWith(
+      primary: primary,
+      onPrimary: Colors.white,
+      secondary: AppColors.green,
+      surface: bg,
+      onSurface: text,
+      surfaceContainerHighest: card,
+      onSurfaceVariant: AppColors.muted,
     );
-  }
 
-  static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
-      primaryColor: AppColors.primaryLight,
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.primaryLight,
-        secondary: AppColors.secondary,
-        surface: AppColors.cardDark,
-        error: AppColors.destructive,
-        onPrimary: AppColors.textPrimary,
-        onSecondary: AppColors.textLight,
-        onSurface: AppColors.textLight,
-      ),
+      colorScheme: scheme,
+      scaffoldBackgroundColor: bg,
+      splashFactory: InkSparkle.splashFactory,
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.cardDark,
-        foregroundColor: AppColors.textLight,
-        elevation: 2,
-        centerTitle: true,
-        titleTextStyle: GoogleFonts.workSans(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textLight,
+        backgroundColor: bg,
+        foregroundColor: text,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        titleTextStyle: TextStyle(
+          color: text,
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
         ),
       ),
       tabBarTheme: TabBarThemeData(
-        labelColor: AppColors.primaryLight,
-        unselectedLabelColor: AppColors.textLight.withValues(alpha: 0.7),
-        indicatorColor: AppColors.primaryLight,
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: GoogleFonts.workSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        unselectedLabelStyle: GoogleFonts.workSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primaryLight,
-        foregroundColor: AppColors.textPrimary,
-        elevation: 6,
+        labelColor: primary,
+        unselectedLabelColor: AppColors.muted,
+        indicatorColor: primary,
+        indicatorSize: TabBarIndicatorSize.label,
+        dividerColor: Colors.transparent,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.cardDark,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        color: card,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        clipBehavior: Clip.antiAlias,
       ),
-      textTheme: GoogleFonts.workSansTextTheme(ThemeData.dark().textTheme)
-          .apply(
-            bodyColor: AppColors.textLight,
-            displayColor: AppColors.textLight,
-          ),
+      listTileTheme: ListTileThemeData(
+        iconColor: primary,
+        subtitleTextStyle: const TextStyle(color: AppColors.muted, fontSize: 13),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? Colors.white : null,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? AppColors.green : null,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+      ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.cardDark,
-        contentTextStyle: GoogleFonts.workSans(
-          color: AppColors.textLight,
-          fontSize: 14,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryLight,
-          foregroundColor: AppColors.textPrimary,
-          elevation: 2,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          textStyle: GoogleFonts.workSans(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(foregroundColor: AppColors.textLight),
+        backgroundColor: isDark ? AppColors.darkCard : AppColors.lightText,
+        contentTextStyle: const TextStyle(color: Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );
   }
