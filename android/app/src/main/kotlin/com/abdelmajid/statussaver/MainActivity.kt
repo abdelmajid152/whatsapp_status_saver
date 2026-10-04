@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -79,17 +80,41 @@ class MainActivity : FlutterActivity() {
     private fun pickTree(docId: String, result: MethodChannel.Result) {
         pendingPick?.second?.success("cancelled")
         pendingPick = docId to result
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            putExtra(
-                DocumentsContract.EXTRA_INITIAL_URI,
-                DocumentsContract.buildDocumentUri(AUTHORITY, docId),
-            )
+        val intent = treePickerIntent().apply {
+            putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialUri(this, docId))
+            // Some pickers only show internal storage (and so can only jump
+            // into it) when "advanced" roots are enabled.
+            putExtra("android.content.extra.SHOW_ADVANCED", true)
+            putExtra("android.provider.extra.SHOW_ADVANCED", true)
             addFlags(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or
                     Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
             )
         }
         startActivityForResult(intent, PICK_REQUEST)
+    }
+
+    /** The volume's own picker intent carries the extras the system picker
+     *  expects; it is what lets the picker open directly inside a folder. */
+    private fun treePickerIntent(): Intent =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            (getSystemService(STORAGE_SERVICE) as StorageManager)
+                .primaryStorageVolume.createOpenDocumentTreeIntent()
+        } else {
+            Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        }
+
+    /** `…/root/primary` from the volume intent → `…/document/primary%3A<path>`. */
+    private fun initialUri(intent: Intent, docId: String): Uri {
+        @Suppress("DEPRECATION")
+        val volumeRoot = intent.getParcelableExtra<Uri>(DocumentsContract.EXTRA_INITIAL_URI)
+            ?.toString()
+        val path = docId.substringAfter(':')
+        return if (volumeRoot != null && volumeRoot.contains("/root/")) {
+            Uri.parse(volumeRoot.replace("/root/", "/document/") + "%3A" + Uri.encode(path))
+        } else {
+            DocumentsContract.buildDocumentUri(AUTHORITY, docId)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

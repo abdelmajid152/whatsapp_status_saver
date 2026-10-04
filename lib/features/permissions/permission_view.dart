@@ -8,6 +8,7 @@ import '../../core/widgets/app_icons.dart';
 import '../../core/widgets/empty_view.dart';
 import '../../core/widgets/snack.dart';
 import '../media/data/media_item.dart';
+import 'folder_steps.dart';
 import 'storage_access.dart';
 
 class PermissionView extends ConsumerWidget {
@@ -34,14 +35,20 @@ class PermissionView extends ConsumerWidget {
             : Tr.permissionTitle,
       ),
       message: context.tr(Tr.permissionBody),
-      action: FilledButton.icon(
-        onPressed: () => _request(context, ref),
-        icon: const HugeIcon(
-          icon: AppIcons.lock,
-          color: Colors.white,
-          size: 20,
-        ),
-        label: Text(context.tr(Tr.grantPermission)),
+      action: Column(
+        children: [
+          FilledButton.icon(
+            onPressed: () => _request(context, ref),
+            icon: const HugeIcon(
+              icon: AppIcons.lock,
+              color: Colors.white,
+              size: 20,
+            ),
+            label: Text(context.tr(Tr.grantPermission)),
+          ),
+          const SizedBox(height: 24),
+          FolderSteps(source: source),
+        ],
       ),
     );
   }
