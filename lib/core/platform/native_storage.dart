@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
-enum PickResult { ok, wrong, cancelled }
+/// `other`: the user picked the *other* WhatsApp app's folder; it was
+/// granted for that app, but the requested one still isn't.
+enum PickResult { ok, other, wrong, cancelled }
 
 /// A child of a SAF folder.
 typedef SafEntry = ({
@@ -28,9 +30,16 @@ abstract final class NativeStorage {
   static Future<String?> grantedTree(String docId) =>
       _channel.invokeMethod<String>('grantedTree', {'docId': docId});
 
-  /// Opens the system folder picker positioned on [docId].
-  static Future<PickResult> pickTree(String docId) async {
-    final r = await _channel.invokeMethod<String>('pickTree', {'docId': docId});
+  /// Opens the system folder picker positioned on [docId]. A folder covering
+  /// any of [accept] is also kept (reported as [PickResult.other]).
+  static Future<PickResult> pickTree(
+    String docId, {
+    List<String> accept = const [],
+  }) async {
+    final r = await _channel.invokeMethod<String>('pickTree', {
+      'docId': docId,
+      'accept': accept,
+    });
     return PickResult.values.byName(r ?? 'cancelled');
   }
 

@@ -20,9 +20,7 @@ class PermissionView extends ConsumerWidget {
     final result = await ref
         .read(storageAccessProvider(source).notifier)
         .request();
-    if (result == PickResult.wrong && context.mounted) {
-      context.snack(Tr.wrongFolder, icon: AppIcons.error);
-    }
+    if (context.mounted) showPickFeedback(context, result, source);
   }
 
   @override
@@ -51,5 +49,25 @@ class PermissionView extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+/// Explains a folder pick that didn't grant [source].
+void showPickFeedback(
+  BuildContext context,
+  PickResult result,
+  MediaSource source,
+) {
+  switch (result) {
+    case PickResult.wrong:
+      context.snack(Tr.wrongFolder, icon: AppIcons.error);
+    case PickResult.other:
+      context.snack(
+        source == MediaSource.whatsapp
+            ? Tr.pickedBusinessInstead
+            : Tr.pickedWhatsappInstead,
+        icon: AppIcons.info,
+      );
+    case PickResult.ok || PickResult.cancelled:
   }
 }

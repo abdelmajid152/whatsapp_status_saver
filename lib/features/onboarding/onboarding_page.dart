@@ -6,16 +6,20 @@ import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_icons.dart';
 import '../../core/platform/native_storage.dart';
-import '../../core/widgets/snack.dart';
 import '../media/data/media_item.dart';
+import '../permissions/folder_steps.dart';
+import '../permissions/permission_view.dart';
 import '../permissions/storage_access.dart';
 import 'onboarding_controller.dart';
 
 class _Step {
-  const _Step(this.title, this.body, {this.icon});
+  const _Step(this.title, this.body, {this.icon, this.folderSteps = false});
 
   final Tr title;
   final Tr body;
+
+  /// Shows the manual path to the WhatsApp folder under the text.
+  final bool folderSteps;
 
   /// `null` shows the app logo.
   final AppIconData? icon;
@@ -24,7 +28,12 @@ class _Step {
 const _steps = [
   _Step(Tr.onboardTitle1, Tr.onboardBody1),
   _Step(Tr.onboardTitle2, Tr.onboardBody2, icon: AppIcons.status),
-  _Step(Tr.onboardTitle3, Tr.onboardBody3, icon: AppIcons.folderOpen),
+  _Step(
+    Tr.onboardTitle3,
+    Tr.onboardBody3,
+    icon: AppIcons.folderOpen,
+    folderSteps: true,
+  ),
 ];
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -63,8 +72,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         .read(storageAccessProvider(MediaSource.whatsapp).notifier)
         .request();
     if (!mounted) return;
-    if (result == PickResult.wrong) {
-      context.snack(Tr.wrongFolder, icon: AppIcons.error);
+    // Keep the user here until WhatsApp itself is granted (or cancelled).
+    if (result == PickResult.wrong || result == PickResult.other) {
+      showPickFeedback(context, result, MediaSource.whatsapp);
       return;
     }
     _finish();
@@ -139,30 +149,40 @@ class _StepView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _Illustration(icon: step.icon),
-          const SizedBox(height: 48),
-          Text(
-            context.tr(step.title),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+    // Scrollable so the extra folder steps never overflow small screens.
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _Illustration(icon: step.icon, compact: step.folderSteps),
+              SizedBox(height: step.folderSteps ? 28 : 48),
+              Text(
+                context.tr(step.title),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                context.tr(step.body),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.6,
+                ),
+              ),
+              if (step.folderSteps) ...[
+                const SizedBox(height: 20),
+                const FolderSteps(source: MediaSource.whatsapp),
+              ],
+            ],
           ),
-          const SizedBox(height: 14),
-          Text(
-            context.tr(step.body),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              height: 1.6,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -170,9 +190,12 @@ class _StepView extends StatelessWidget {
 
 /// Concentric soft circles with the logo or an icon in the middle.
 class _Illustration extends StatelessWidget {
-  const _Illustration({this.icon});
+  const _Illustration({this.icon, this.compact = false});
 
   final AppIconData? icon;
+
+  /// Smaller, to leave room for extra content below.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -188,48 +211,53 @@ class _Illustration extends StatelessWidget {
     );
 
     return SizedBox.square(
-      dimension: 260,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          ring(260, 0.05),
-          ring(200, 0.08),
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: icon == null ? Colors.white : null,
-              gradient: icon == null
-                  ? null
-                  : const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [AppColors.green, AppColors.tealDark],
-                    ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.green.withValues(alpha: 0.35),
-                  blurRadius: 30,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
+      dimension: compact ? 180 : 260,
+      child: FittedBox(
+        child: SizedBox.square(
+          dimension: 260,
+          child: Stack(
             alignment: Alignment.center,
-            child: icon == null
-                ? Image.asset(
-                    'assets/branding/icon_foreground.png',
-                    width: 250,
-                    height: 250,
-                  )
-                : HugeIcon(
-                    icon: icon!,
-                    color: Colors.white,
-                    size: 64,
-                    strokeWidth: 1.8,
-                  ),
+            children: [
+              ring(260, 0.05),
+              ring(200, 0.08),
+              Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: icon == null ? Colors.white : null,
+                  gradient: icon == null
+                      ? null
+                      : const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [AppColors.green, AppColors.tealDark],
+                        ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.green.withValues(alpha: 0.35),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: icon == null
+                    ? Image.asset(
+                        'assets/branding/icon_foreground.png',
+                        width: 250,
+                        height: 250,
+                      )
+                    : HugeIcon(
+                        icon: icon!,
+                        color: Colors.white,
+                        size: 64,
+                        strokeWidth: 1.8,
+                      ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

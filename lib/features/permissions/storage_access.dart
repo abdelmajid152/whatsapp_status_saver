@@ -44,8 +44,25 @@ class StorageAccess extends AsyncNotifier<bool> {
     }
     final result = await NativeStorage.pickTree(
       MediaRepository.statusesDocId(source),
+      accept: [
+        for (final s in [MediaSource.whatsapp, MediaSource.business])
+          MediaRepository.statusesDocId(s),
+      ],
     );
-    if (result == PickResult.ok) state = const AsyncData(true);
+    switch (result) {
+      case PickResult.ok:
+        state = const AsyncData(true);
+      case PickResult.other:
+        // Granted for the other WhatsApp app — let its tab pick it up.
+        ref.invalidate(
+          storageAccessProvider(
+            source == MediaSource.whatsapp
+                ? MediaSource.business
+                : MediaSource.whatsapp,
+          ),
+        );
+      case PickResult.wrong || PickResult.cancelled:
+    }
     return result;
   }
 }

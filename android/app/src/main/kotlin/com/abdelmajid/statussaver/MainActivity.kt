@@ -29,7 +29,14 @@ import java.util.concurrent.Executors
 class MainActivity : FlutterActivity() {
     private val io = Executors.newFixedThreadPool(3)
     private val main = Handler(Looper.getMainLooper())
-    private var pendingPick: Pair<String, MethodChannel.Result>? = null
+    private var pendingPick: PendingPick? = null
+
+    /** [docId] is what was asked for; any folder covering one of [accept] is kept. */
+    private class PendingPick(
+        val docId: String,
+        val accept: List<String>,
+        val result: MethodChannel.Result,
+    )
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -41,7 +48,11 @@ class MainActivity : FlutterActivity() {
         when (call.method) {
             "sdkInt" -> result.success(Build.VERSION.SDK_INT)
             "grantedTree" -> result.success(grantedTree(call.arg("docId"))?.toString())
-            "pickTree" -> pickTree(call.arg("docId"), result)
+            "pickTree" -> pickTree(
+                call.arg("docId"),
+                call.argument<List<String>>("accept") ?: emptyList(),
+                result,
+            )
             "list" -> background(result) {
                 list(Uri.parse(call.arg("tree")), call.arg("docId"))
             }
@@ -77,9 +88,9 @@ class MainActivity : FlutterActivity() {
         return docId == root || isChild
     }
 
-    private fun pickTree(docId: String, result: MethodChannel.Result) {
-        pendingPick?.second?.success("cancelled")
-        pendingPick = docId to result
+    private fun pickTree(docId: String, accept: List<String>, result: MethodChannel.Result) {
+        pendingPick?.result?.success("cancelled")
+        pendingPick = PendingPick(docId, accept + docId, result)
         val intent = treePickerIntent().apply {
             putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialUri(this, docId))
             // Some pickers only show internal storage (and so can only jump
@@ -120,19 +131,24 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != PICK_REQUEST) return
-        val (docId, result) = pendingPick ?: return
+        val pick = pendingPick ?: return
         pendingPick = null
 
+        // The picker may open on the last folder used instead of the one we
+        // asked for, so any WhatsApp status folder is accepted and kept;
+        // "other" tells Dart the grant is for the other WhatsApp app.
         val tree = data?.data
+        val result = pick.result
         when {
             resultCode != RESULT_OK || tree == null -> result.success("cancelled")
-            tree.authority != AUTHORITY || !covers(tree, docId) -> result.success("wrong")
+            tree.authority != AUTHORITY || pick.accept.none { covers(tree, it) } ->
+                result.success("wrong")
             else -> {
                 contentResolver.takePersistableUriPermission(
                     tree,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION,
                 )
-                result.success("ok")
+                result.success(if (covers(tree, pick.docId)) "ok" else "other")
             }
         }
     }
