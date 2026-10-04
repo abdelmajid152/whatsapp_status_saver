@@ -3,9 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatsapp_status_saver/app.dart';
 import 'package:whatsapp_status_saver/core/storage/prefs.dart';
-import 'package:whatsapp_status_saver/features/permissions/permission_controller.dart';
+import 'package:whatsapp_status_saver/features/permissions/storage_access.dart';
 
-class _DeniedPermission extends PermissionController {
+class _DeniedPermission extends StorageAccess {
+  _DeniedPermission(super.source);
+
   @override
   Future<bool> build() async => false;
 }
@@ -22,14 +24,14 @@ void main() {
       ProviderScope(
         overrides: [
           prefsProvider.overrideWithValue(prefs),
-          permissionProvider.overrideWith(_DeniedPermission.new),
+          storageAccessProvider.overrideWith2(_DeniedPermission.new),
         ],
         child: const App(),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Grant access'), findsWidgets);
+    expect(find.text('Allow access'), findsWidgets);
 
     await tester.tap(find.text('Settings').last);
     await tester.pumpAndSettle();

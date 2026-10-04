@@ -5,7 +5,10 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_icons.dart';
-import '../permissions/permission_controller.dart';
+import '../../core/platform/native_storage.dart';
+import '../../core/widgets/snack.dart';
+import '../media/data/media_item.dart';
+import '../permissions/storage_access.dart';
 import 'onboarding_controller.dart';
 
 class _Step {
@@ -53,8 +56,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       );
       return;
     }
-    // Last step: ask for storage access, then enter the app either way.
-    await ref.read(permissionProvider.notifier).request();
+    // Last step: grant the WhatsApp status folder, then enter the app.
+    // A wrong folder keeps the user here to retry; cancelling moves on
+    // (the Status tab offers the same button later).
+    final result = await ref
+        .read(storageAccessProvider(MediaSource.whatsapp).notifier)
+        .request();
+    if (!mounted) return;
+    if (result == PickResult.wrong) {
+      context.snack(Tr.wrongFolder, icon: AppIcons.error);
+      return;
+    }
     _finish();
   }
 

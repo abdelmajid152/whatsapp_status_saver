@@ -15,14 +15,20 @@ enum MediaSource {
 
 @immutable
 class MediaItem {
-  const MediaItem(this.path, this.type, this.modified);
+  const MediaItem(this.path, this.type, this.modified, {this.displayName});
 
   final String path;
   final MediaType type;
   final DateTime modified;
 
+  /// SAF URIs don't end with the file name, so it's passed explicitly.
+  final String? displayName;
+
   bool get isVideo => type == MediaType.video;
-  String get name => path.substring(path.lastIndexOf('/') + 1);
+
+  /// `content://` URI from SAF (Android 11+) rather than a file path.
+  bool get isContent => path.startsWith('content://');
+  String get name => displayName ?? path.substring(path.lastIndexOf('/') + 1);
 
   @override
   bool operator ==(Object other) =>

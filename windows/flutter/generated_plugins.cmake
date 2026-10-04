@@ -3,7 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  fc_native_video_thumbnail
   permission_handler_windows
   share_plus
   url_launcher_windows

@@ -9,8 +9,9 @@ import '../../../core/widgets/shimmer_box.dart';
 import '../data/media_item.dart';
 import '../providers/media_providers.dart';
 
-/// Downscaled preview: images are decoded at grid size (not full
-/// resolution), videos use a cached native thumbnail. Shimmers until ready.
+/// Downscaled preview: local images are decoded at grid size (not full
+/// resolution); videos and SAF images use a cached native thumbnail.
+/// Shimmers until ready.
 class MediaThumbnail extends ConsumerWidget {
   const MediaThumbnail(this.item, {super.key, this.fit = BoxFit.cover});
 
@@ -21,10 +22,11 @@ class MediaThumbnail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final thumb = item.isVideo ? ref.watch(videoThumbProvider(item)) : null;
+    final needsThumb = item.isVideo || item.isContent;
+    final thumb = needsThumb ? ref.watch(thumbProvider(item)) : null;
     if (thumb != null && thumb.isLoading) return const ShimmerBox();
 
-    final path = item.isVideo ? thumb!.value : item.path;
+    final path = needsThumb ? thumb!.value : item.path;
     if (path == null) return _Broken(item);
 
     return Image.file(

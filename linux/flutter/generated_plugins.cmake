@@ -3,7 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  fc_native_video_thumbnail
   url_launcher_linux
 )
 

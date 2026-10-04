@@ -32,7 +32,7 @@ const _ar = <_Section>[
   ),
   (
     title: 'الأذونات',
-    body: 'يطلب التطبيق إذن الوصول إلى الملفات لقراءة الحالات وحفظها فقط. يمكنك سحب الإذن في أي وقت من إعدادات الهاتف.',
+    body: 'لا يطلب التطبيق الوصول إلى كل ملفاتك. أنت تختار مجلد حالات واتساب (وواتساب الأعمال إن أردت) عبر نافذة اختيار المجلدات في النظام، ويقرأ التطبيق من هذا المجلد فقط. يمكنك سحب هذا الوصول في أي وقت من إعدادات الهاتف.',
   ),
   (
     title: 'خصوصية الآخرين',
@@ -68,7 +68,7 @@ const _en = <_Section>[
   ),
   (
     title: 'Permissions',
-    body: 'Storage access is used only to read and save statuses. You can revoke it at any time in your phone settings.',
+    body: 'The app does not request access to all your files. You pick the WhatsApp (and optionally WhatsApp Business) status folder in the system folder picker, and the app reads only that folder. You can revoke this access at any time in your phone settings.',
   ),
   (
     title: 'Other people’s privacy',

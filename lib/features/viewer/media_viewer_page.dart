@@ -9,6 +9,7 @@ import '../../core/widgets/app_icons.dart';
 import '../../core/widgets/snack.dart';
 import '../media/data/media_item.dart';
 import '../media/providers/media_providers.dart';
+import '../media/widgets/media_thumbnail.dart';
 import '../media/widgets/save_button.dart';
 import '../media/widgets/share_button.dart';
 import 'widgets/video_view.dart';
@@ -99,10 +100,7 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
           final item = widget.items[i];
           return item.isVideo
               ? VideoView(key: ValueKey(item.path), item: item)
-              : InteractiveViewer(
-                  maxScale: 4,
-                  child: Center(child: Image.file(File(item.path))),
-                );
+              : _ImageView(item);
         },
       ),
       bottomNavigationBar: SafeArea(
@@ -167,6 +165,29 @@ class _DeleteButton extends ConsumerWidget {
         size: 20,
       ),
       label: Text(context.tr(Tr.delete)),
+    );
+  }
+}
+
+/// Zoomable full-size image. SAF images are copied to a local file first;
+/// the grid thumbnail is shown meanwhile.
+class _ImageView extends ConsumerWidget {
+  const _ImageView(this.item);
+
+  final MediaItem item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final path = item.isContent
+        ? ref.watch(localFileProvider(item)).value
+        : item.path;
+    return InteractiveViewer(
+      maxScale: 4,
+      child: Center(
+        child: path == null
+            ? MediaThumbnail(item, fit: BoxFit.contain)
+            : Image.file(File(path), gaplessPlayback: true),
+      ),
     );
   }
 }

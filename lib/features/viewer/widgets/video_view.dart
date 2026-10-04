@@ -31,7 +31,9 @@ class _VideoViewState extends State<VideoView> {
   static const _skip = Duration(seconds: 10);
   static const _hideAfter = Duration(seconds: 3);
 
-  late final _controller = VideoPlayerController.file(File(widget.item.path));
+  late final _controller = widget.item.isContent
+      ? VideoPlayerController.contentUri(Uri.parse(widget.item.path))
+      : VideoPlayerController.file(File(widget.item.path));
   late final Future<void> _init = _controller.initialize().then((_) {
     _controller
       ..setLooping(true)

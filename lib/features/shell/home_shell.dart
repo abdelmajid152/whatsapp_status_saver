@@ -5,7 +5,7 @@ import '../../core/l10n/strings.dart';
 import '../../core/widgets/app_icons.dart';
 import '../media/data/media_item.dart';
 import '../media/widgets/media_page.dart';
-import '../permissions/permission_controller.dart';
+import '../permissions/storage_access.dart';
 import '../settings/settings_page.dart';
 import 'nav_index.dart';
 import 'widgets/curved_nav_bar.dart';
@@ -22,7 +22,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   // which in turn rescans every source.
   late final _lifecycle = AppLifecycleListener(onResume: _refresh);
 
-  void _refresh() => ref.invalidate(permissionProvider);
+  void _refresh() => ref.invalidate(storageAccessProvider);
 
   @override
   void initState() {
